@@ -349,8 +349,47 @@ public class possys {
                 System.out.println("Too many attempts. Logging in as guest");
                 return "Guest";
             }
+
         }
 
+    }
+    static void saveCart(String username, ArrayList<String> itemsOrdered, ArrayList<Double> originalPrice, ArrayList<Integer> quantitiesOrdered, ArrayList<Double> discountAmount, ArrayList<Double> subtotalList) {
+        try {
+            FileWriter fw = new FileWriter(username + "_cart.txt", false);
+            for (int i = 0; i < itemsOrdered.size(); i++) {
+                fw.write(itemsOrdered.get(i) + ":"+ originalPrice.get(i) + ":" + quantitiesOrdered.get(i) + ":" + discountAmount.get(i) + ":" + subtotalList.get(i) + "\n");
+
+            }
+            fw.close();
+
+            } catch (IOException e) {
+
+    }
+
+    }
+
+    static boolean loadCard(String username, ArrayList<String> itemsOrdered, ArrayList<Double> originalPrice, ArrayList<Integer> quantitiesOrdered, ArrayList<Double> discountAmount, ArrayList<Double> subtotalList) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(username + "_cart.txt"));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                itemsOrdered.add(parts[0]);
+                originalPrice.add(Double.parseDouble(parts[1]));
+                quantitiesOrdered.add(Integer.parseInt(parts[2]));
+                discountAmount.add(Double.parseDouble(parts[3]));
+                subtotalList.add(Double.parseDouble(parts[4]));
+            }
+            reader.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    static void deleteCart(String username) {
+        new File(username + "_cart.txt").delete();
     }
 }
 
