@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,6 +20,17 @@ public class possys {
         //Login System//
         String username = newloginSystem();
         boolean isMember = !username.equals("Guest");
+
+
+
+        //View History for members and guests//
+
+        System.out.print("Do you want to view all of your purchase history? [y/n]: ");
+        if (scanner.nextLine().equalsIgnoreCase("y")) {
+            viewHistory(username);
+        }
+
+        //
 
 
         //Menu, Prices and Discounts Array
@@ -132,6 +144,9 @@ public class possys {
 
         printReceipt(itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
 
+
+        ///SAVEHISTORY
+        saveHistory(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
 
     }
 
@@ -391,6 +406,76 @@ public class possys {
     static void deleteCart(String username) {
         new File(username + "_cart.txt").delete();
     }
+
+
+
+
+
+    //New additions, (Sak)
+
+
+    static void saveHistory(String username, ArrayList<String> itemsOrdered, ArrayList<Double> originalPrice,
+                            ArrayList<Integer> quantitiesOrdered, ArrayList<Double> discountAmount,
+                            ArrayList<Double> subtotalList, double totalPrice, double bulkDiscount) {
+
+        String historyFile = username + "_history.txt";
+        LocalTime currentTime = LocalTime.now();
+        LocalDate currentDate = LocalDate.now();
+
+        try {
+            FileWriter fw = new FileWriter(historyFile, true);
+
+            fw.write("--- Purchase Date and Time: " + currentDate + " " + currentTime.getHour() + ":"
+                    + String.format("%02d", currentTime.getMinute()) + " ---\n");
+
+            fw.write(String.format("%-18s %-10s %-7s %-6s  %-6s\n",
+                    "Item", "Price", "Qty", "Disc%", "Subtotal"));
+
+            for (int i = 0; i < itemsOrdered.size(); i++) {
+                fw.write(String.format("%-18s $%-9.2f x%-7d %-6.0f  $%-6.2f\n",
+                        itemsOrdered.get(i),
+                        originalPrice.get(i),
+                        quantitiesOrdered.get(i),
+                        discountAmount.get(i),
+                        subtotalList.get(i)));
+            }
+
+            fw.write("Subtotal: $" + df.format(totalPrice) + "\n");
+            fw.write("Bulk Discount: " + bulkDiscount + "%\n");
+            fw.write("Grand Total: $" + df.format(totalPrice * ((100 - bulkDiscount) / 100)) + "\n\n");
+
+
+            fw.close();
+            System.out.println("Receipt saved to history.");
+
+        } catch (IOException e) {
+            System.out.println("Error saving history: " + e.getMessage());
+        }
+    }
+
+    static void viewHistory(String username) {
+        String historyFile = username + "_history.txt";
+        System.out.println("\n--- Purchase History for " + username + " ---");
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(historyFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("No purchase history found for " + username + ".");
+        }
+    }
+
+
+
+
+
+
+
+
 } //HELLO
 
 
