@@ -37,6 +37,24 @@ public class possys {
         //Ordering Loop
         boolean ordering = true;
 
+        boolean cartFound = loadCard(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
+        if (cartFound) {
+            System.out.println("Resuming your previous order");
+            System.out.print("Would you like continue ordering [y/n]: ");
+            while (true) {
+                String resume = scanner.nextLine();
+                if (resume.equalsIgnoreCase("n")) {
+                    ordering = false;
+                    break;
+                } else if (resume.equalsIgnoreCase("y")) {
+                    break;
+                } else {
+                    System.out.print("Please enter y or n: ");
+                }
+            }
+
+        }
+
         //Displaying Menu
         while (ordering) {
             displayMenu(menu, price);
@@ -91,6 +109,7 @@ public class possys {
             //Calculating the Subtotal Price
             double subtotalDiscountedPrice = itemPrice * amount * (1 - (discountPercent / 100));
             subtotalList.add(subtotalDiscountedPrice);
+            saveCart(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
 
             //Looping the order
             String orderAgain = "";
@@ -131,7 +150,7 @@ public class possys {
         }
 
         printReceipt(itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
-
+        deleteCart(username);
 
     }
 
@@ -195,6 +214,7 @@ public class possys {
     }
 
 
+
     static boolean loginSystem() {
         boolean isMember = false;
         String hasMember = "";
@@ -243,21 +263,23 @@ public class possys {
         System.out.println("2. Login");
         System.out.println("3. Guest");
         System.out.print("Choose: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+
         while (true) {
-            if (choice != 1 && choice != 2 && choice != 3) {
-                System.out.print("Invalid Choice. Select again: ");
-                choice = scanner.nextInt();
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
                 scanner.nextLine();
-            } else {
                 if (choice == 1) {
                     return register();
                 } else if (choice == 2) {
                     return loginUser();
-                } else {
+                } else if (choice == 3) {
                     return "Guest";
+                } else  {
+                    System.out.print("Invalid Choice. Select again: ");
                 }
+            } else {
+                System.out.print("Invalid Input. Select again: ");
+                scanner.nextLine();
             }
         }
 
