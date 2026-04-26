@@ -23,130 +23,41 @@ public class possys {
 
 
 
-        //View History for members and guests//
+        // Ordering loop that include the orders and viewhistory//
+        boolean running = true;
+        while (running) {
+            System.out.println("1. Order");
+            System.out.println("2. View History");
+            System.out.println("3. Exit");
+            System.out.print("Choose: ");
+            int userChoice = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.print("Do you want to view all of your purchase history? [y/n]: ");
-        if (scanner.nextLine().equalsIgnoreCase("y")) {
-            viewHistory(username);
+            switch (userChoice) {
+                case 1:
+                    orderingLogic(username, isMember, hour);
+                    break;
+                case 2:
+                    if (isMember) {
+                        viewHistory(username);
+                    } else {
+                        System.out.println("History is only available for members.");
+                    }
+                    break;
+                case 3:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
         }
+
+
+
 
         //
 
 
-        //Menu, Prices and Discounts Array
-        String[] menu = {"Iced Latte", "Iced Cappuccino", "Iced Americano", "Matcha Latte", "Cake", "Egg Tart", "Donut", "Water"};
-        double[] price = {2.0, 2.5, 1.5, 2.5, 3.0, 1.5, 1.0, 0.75};
-        boolean[] isDiscountable = {false, false, false, false, true, true, true, false};
-
-
-        ArrayList<String> itemsOrdered = new ArrayList<>();
-        ArrayList<Integer> quantitiesOrdered = new ArrayList<>();
-        ArrayList<Double> discountAmount = new ArrayList<>();
-        ArrayList<Double> originalPrice = new ArrayList<>();
-        ArrayList<Double> subtotalList = new ArrayList<>();
-
-
-        //Ordering Loop
-        boolean ordering = true;
-
-        //Displaying Menu
-        while (ordering) {
-            displayMenu(menu, price);
-
-
-            //Asking for quantity
-            System.out.print("Select item (1-8): ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-            if (choice < 1 || choice > menu.length) {
-                System.out.println("Invalid Choice. Please try again!");
-                continue;
-            }
-
-
-            //Quantity and Error Handling
-            int amount = 0;
-            while (true) {
-                System.out.print("Enter your quantity: ");
-                if (scanner.hasNextInt()) {
-                    amount = scanner.nextInt();
-                    scanner.nextLine();
-                    if (amount > 0) {
-                        break;
-                    } else {
-                        System.out.println("Quantity must be greater than 0.");
-                    }
-                } else {
-
-                    System.out.println("Please enter a valid number");
-                    scanner.nextLine();
-
-                }
-            }
-
-            //Adding Items into Array
-            String itemsAdd = menu[choice - 1];
-            double itemPrice = price[choice - 1];
-            originalPrice.add(itemPrice);
-
-            itemsOrdered.add(itemsAdd);
-            quantitiesOrdered.add(amount);
-
-
-            //Calculating Discounts and Non-Discounts Subtotal
-            double discountPercent = 0;
-            if (isDiscountable[choice - 1] && (hour >= 17 && hour <= 22)) {
-                discountPercent = 30;
-            }
-            discountAmount.add(discountPercent);
-
-            //Calculating the Subtotal Price
-            double subtotalDiscountedPrice = itemPrice * amount * (1 - (discountPercent / 100));
-            subtotalList.add(subtotalDiscountedPrice);
-
-            //Looping the order
-            String orderAgain = "";
-            while (true) {
-                System.out.print("Do you want to order again? [y/n]: ");
-                orderAgain = scanner.next();
-                if (orderAgain.equalsIgnoreCase("y") || orderAgain.equalsIgnoreCase("n")) {
-                    break;
-                } else {
-                    System.out.println("Invalid Input");
-                }
-            }
-
-            if (!orderAgain.equalsIgnoreCase("y")) {
-                ordering = false;
-            }
-        }
-
-        // Calculate total quantity
-        int totalQty = 0;
-        for (int s : quantitiesOrdered) {
-            totalQty += s;
-        }
-        double totalPrice = 0;
-        for (double s : subtotalList) {
-            totalPrice += s;
-        }
-
-        double bulkDiscount = 0;
-        //Discount if order 5 or more items
-        if (totalQty >= 5) {
-            bulkDiscount += 10;
-        }
-
-        //Discount if customer has a membership
-        if (isMember) {
-            bulkDiscount += 10;
-        }
-
-        printReceipt(itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
-
-
-        ///SAVEHISTORY
-        saveHistory(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
 
     }
 
@@ -469,6 +380,154 @@ public class possys {
         }
     }
 
+    //viewAllPurchaseHistory for admin.
+    static void viewAllPurchaseHistory() {
+        System.out.println("\n--- All Users Purchase History ---");
+
+        File dir = new File(".");
+        File[] historyFiles = dir.listFiles((d, name) -> name.endsWith("_history.txt"));
+
+        if (historyFiles == null || historyFiles.length == 0) {
+            System.out.println("No purchase history found for any user.");
+            return;
+        }
+
+        for (File file : historyFiles) {
+
+            String username = file.getName().replace("_history.txt", "");
+            System.out.println("\n---------- User: " + username + " ----------");
+
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                reader.close();
+            } catch (IOException e) {
+                System.out.println("Error reading history for " + username + ": " + e.getMessage());
+            }
+            System.out.println("=".repeat(40));
+        }
+    }
+
+
+    /// This is your ordering logic I put it so I can use it to loop with viewHistory
+
+
+
+    static void orderingLogic(String username, boolean isMember, int hour) {
+        String[] menu = {"Iced Latte", "Iced Cappuccino", "Iced Americano", "Matcha Latte", "Cake", "Egg Tart", "Donut", "Water"};
+        double[] price = {2.0, 2.5, 1.5, 2.5, 3.0, 1.5, 1.0, 0.75};
+        boolean[] isDiscountable = {false, false, false, false, true, true, true, false};
+
+        ArrayList<String> itemsOrdered = new ArrayList<>();
+        ArrayList<Integer> quantitiesOrdered = new ArrayList<>();
+        ArrayList<Double> discountAmount = new ArrayList<>();
+        ArrayList<Double> originalPrice = new ArrayList<>();
+        ArrayList<Double> subtotalList = new ArrayList<>();
+
+        boolean ordering = true;
+
+        //Displaying Menu
+        while (ordering) {
+            displayMenu(menu, price);
+
+
+            //Asking for quantity
+            System.out.print("Select item (1-8): ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            if (choice < 1 || choice > menu.length) {
+                System.out.println("Invalid Choice. Please try again!");
+                continue;
+            }
+
+
+            //Quantity and Error Handling
+            int amount = 0;
+            while (true) {
+                System.out.print("Enter your quantity: ");
+                if (scanner.hasNextInt()) {
+                    amount = scanner.nextInt();
+                    scanner.nextLine();
+                    if (amount > 0) {
+                        break;
+                    } else {
+                        System.out.println("Quantity must be greater than 0.");
+                    }
+                } else {
+
+                    System.out.println("Please enter a valid number");
+                    scanner.nextLine();
+
+                }
+            }
+
+            //Adding Items into Array
+            String itemsAdd = menu[choice - 1];
+            double itemPrice = price[choice - 1];
+            originalPrice.add(itemPrice);
+
+            itemsOrdered.add(itemsAdd);
+            quantitiesOrdered.add(amount);
+
+
+            //Calculating Discounts and Non-Discounts Subtotal
+            double discountPercent = 0;
+            if (isDiscountable[choice - 1] && (hour >= 17 && hour <= 22)) {
+                discountPercent = 30;
+            }
+            discountAmount.add(discountPercent);
+
+            //Calculating the Subtotal Price
+            double subtotalDiscountedPrice = itemPrice * amount * (1 - (discountPercent / 100));
+            subtotalList.add(subtotalDiscountedPrice);
+
+            //Looping the order
+            String orderAgain = "";
+            while (true) {
+                System.out.print("Do you want to order again? [y/n]: ");
+                orderAgain = scanner.next();
+                if (orderAgain.equalsIgnoreCase("y") || orderAgain.equalsIgnoreCase("n")) {
+                    break;
+                } else {
+                    System.out.println("Invalid Input");
+                }
+            }
+
+            if (!orderAgain.equalsIgnoreCase("y")) {
+                ordering = false;
+            }
+        }
+
+
+        int totalQty = 0;
+        for (int s : quantitiesOrdered) {
+            totalQty += s;
+        }
+        double totalPrice = 0;
+        for (double s : subtotalList) {
+            totalPrice += s;
+        }
+
+        double bulkDiscount = 0;
+        //Discount if order 5 or more items
+        if (totalQty >= 5) {
+            bulkDiscount += 10;
+        }
+
+        //Discount if customer has a membership
+        if (isMember) {
+            bulkDiscount += 10;
+        }
+
+
+        printReceipt(itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
+
+        saveHistory(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
+    }
 
 
 
