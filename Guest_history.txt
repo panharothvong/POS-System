@@ -1,0 +1,22 @@
+
+--- Purchase Date and Time: 2026-04-29 20:19 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Iced Latte         $2.00      x3       0       $6.00  
+
+Subtotal: $6.00
+Bulk Discount: 0.0%
+Grand Total: $6.00
+
+======================================================================
+
+--- Purchase Date and Time: 2026-04-29 20:19 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Matcha Latte       $2.50      x5       0       $12.50 
+
+Subtotal: $12.50
+Bulk Discount: 10.0%
+Grand Total: $11.25
+
+======================================================================

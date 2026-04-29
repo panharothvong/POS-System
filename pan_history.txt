@@ -1,0 +1,56 @@
+
+--- Purchase Date and Time: 2026-04-29 13:29 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Iced Americano     $1.50      x3       0       $4.50  
+
+Subtotal: $4.50
+Bulk Discount: 10.0%
+Grand Total: $4.05
+
+======================================================================
+--- Purchase Date and Time: 2026-04-29 13:29 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Iced Americano     $1.50      x4       0       $6.00  
+Iced Americano     $1.50      x4       0       $6.00  
+Egg Tart           $1.50      x3       0       $4.50  
+
+Subtotal: $16.50
+Bulk Discount: 20.0%
+Grand Total: $13.20
+
+======================================================================
+--- Purchase Date and Time: 2026-04-29 20:17 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Iced Americano     $1.50      x3       0       $4.50  
+Cake               $3.00      x6       30      $12.60 
+
+Subtotal: $17.10
+Bulk Discount: 20.0%
+Grand Total: $13.68
+
+======================================================================
+
+--- Purchase Date and Time: 2026-04-29 20:17 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Iced Americano     $1.50      x5       0       $7.50  
+
+Subtotal: $7.50
+Bulk Discount: 20.0%
+Grand Total: $6.00
+
+======================================================================
+
+--- Purchase Date and Time: 2026-04-29 20:20 ---
+
+Item               Price      Qty     Disc%   Subtotal
+Matcha Latte       $2.50      x5       0       $12.50 
+
+Subtotal: $12.50
+Bulk Discount: 20.0%
+Grand Total: $10.00
+
+======================================================================

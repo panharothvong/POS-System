@@ -16,22 +16,68 @@ public class possys {
 
         //Display Time
         int hour = displayTime();
+        String username = "Guest";
+        boolean isMember = false;
+
+        System.out.println("**AUTHORIZED ACCESS ONLY**");
+        System.out.println("1. Admin");
+        System.out.println("2. Customer");
+        System.out.print("\nChoose: ");
+        int accessLogin = 0;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                accessLogin = scanner.nextInt();
+                scanner.nextLine();
+                if (accessLogin == 1 || accessLogin == 2) {
+                    break;
+                } else {
+                    System.out.print("Invalid Input. Select again: ");
+                }
+            } else {
+                System.out.print("Invalid input. Select again: ");
+                scanner.nextLine();
+            }
+        }
+
+        if (accessLogin == 1) {
+            System.out.print("\nEnter admin password: ");
+            String adminPw = scanner.nextLine();
+            if (adminPw.equals("admin123")) {
+                viewAllPurchaseHistory();
+                return;
+            } else {
+                System.out.println("Wrong Password!");
+                return;
+            }
+        } else {
+            username = newloginSystem();
+            isMember = !username.equals("Guest");
+
+        }
+
 
         //Login System//
-        String username = newloginSystem();
-        boolean isMember = !username.equals("Guest");
 
 
 
         // Ordering loop that include the orders and viewhistory//
         boolean running = true;
         while (running) {
-            System.out.println("1. Order");
+            System.out.println("\n1. Order");
             System.out.println("2. View History");
             System.out.println("3. Exit");
-            System.out.print("Choose: ");
-            int userChoice = scanner.nextInt();
-            scanner.nextLine();
+            System.out.print("\nChoose: ");
+            int userChoice = 0;
+            while (true) {
+                if (scanner.hasNextInt()) {
+                    userChoice = scanner.nextInt();
+                    scanner.nextLine();
+                    break;
+                } else {
+                    System.out.print("Invalid input. Select again: ");
+                    scanner.nextLine();
+                }
+            }
 
             switch (userChoice) {
                 case 1:
@@ -79,13 +125,13 @@ public class possys {
     }
 
     static void displayMenu(String[] menu, double[] price) {
-        System.out.println("\nMenu");
-        System.out.printf("%-2s %-18s %-6s\n",
-                "",
+        System.out.println("\n============ Menu ============\n");
+        System.out.printf("%-4s %-18s %-6s\n",
+                "No.",
                 "Food and Drinks",
                 "Price");
         for (int i = 0; i < menu.length; i++) {
-            System.out.printf("%-1d: %-18s $%-6.2f\n",
+            System.out.printf("%-4d %-18s $%-6.2f\n",
                     (i + 1),
                     menu[i],
                     price[i]);
@@ -96,10 +142,11 @@ public class possys {
 
 
     static void printReceipt(ArrayList<String> itemsOrdered, ArrayList<Double> originalPrice, ArrayList<Integer> quantitiesOrdered, ArrayList<Double> discountAmount, ArrayList<Double> subtotalList, double totalPrice, double bulkDiscount) {
-        System.out.println("\n\nOrder Receipt");
+        System.out.println("\n\nOrder Receipt\n");
         System.out.println("--- Final Receipt ---\n");
 
-        System.out.printf("%-18s %-10s %-7s %-6s  %-6s\n",
+        System.out.printf("%-4s %-18s %-10s %-7s %-6s  %-6s\n",
+                "No.",
                 "Item",
                 "Price",
                 "Qty",
@@ -107,7 +154,8 @@ public class possys {
                 "Subtotal");
 
         for (int i = 0; i < itemsOrdered.size(); i++) {
-            System.out.printf("%-18s $%-9.2f x%-7d %-6.0f  $%-6.2f\n",
+            System.out.printf("%-4d %-18s $%-9.2f x%-7d %-6.0f  $%-6.2f\n",
+                    (i+1),
                     itemsOrdered.get(i),
                     originalPrice.get(i),
                     quantitiesOrdered.get(i),
@@ -117,7 +165,7 @@ public class possys {
         }
         System.out.println("\nSubtotal: " + "$" + df.format(totalPrice));
         System.out.println("Bulk Discount: " + bulkDiscount + "%");
-        System.out.println("Grand Total: " + "$" + df.format(totalPrice * ((100 - bulkDiscount) / 100)));
+        System.out.println("Grand Total: " + "$" + df.format(totalPrice * ((100 - bulkDiscount) / 100)) + "\n");
     }
 
 
@@ -165,25 +213,30 @@ public class possys {
 
 
     static String newloginSystem() {
-        System.out.println("1. Register");
+        System.out.println("\n1. Register");
         System.out.println("2. Login");
         System.out.println("3. Guest");
-        System.out.print("Choose: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("\nChoose: ");
+        int choice = 0;
         while (true) {
-            if (choice != 1 && choice != 2 && choice != 3) {
-                System.out.print("Invalid Choice. Select again: ");
+            if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
                 scanner.nextLine();
-            } else {
                 if (choice == 1) {
                     return register();
-                } else if (choice == 2) {
+                }
+                else if (choice == 2) {
                     return loginUser();
-                } else {
+                }
+                else if (choice == 3) {
                     return "Guest";
                 }
+                else {
+                    System.out.print("Invalid choice. Select again: ");
+                }
+            } else {
+                System.out.print("Invalid input. Select again: ");
+                scanner.nextLine();
             }
         }
 
@@ -192,7 +245,7 @@ public class possys {
 
     static String register() {
         while (true) {
-            System.out.println("Registration for membership cost 5$. Proceed to payment? [y/n]");
+            System.out.print("Registration for membership cost 5$. Proceed to payment? [y/n]: ");
             String userChoice = scanner.nextLine();
             if (userChoice.equalsIgnoreCase("y")) {
                 String nameInput;
@@ -213,14 +266,14 @@ public class possys {
                     FileWriter fw = new FileWriter(fileName, true);
                     fw.write(nameInput + ":" + pwInput + "\n");
                     fw.close();
-                    System.out.println("Registered Successfully");
+                    System.out.println("\nRegistered Successfully\n");
                     return nameInput;
                 } catch (IOException e) {
                     System.out.println("Error registering");
                     return null;
                 }
             } else if (userChoice.equalsIgnoreCase("n")) {
-                System.out.println("Proceeding as guest.");
+                System.out.println("\nProceeding as guest.\n");
                 return "Guest";
             }
         }
@@ -260,7 +313,7 @@ public class possys {
                 while ((line = reader.readLine()) != null ) {
                     String[] parts = line.split(":");
                     if (parts[0].equals(userInput) && parts[1].equals(pwInput)) {
-                        System.out.println("Login Successful!");
+                        System.out.println("\nLogin Successful!");
                         return userInput;
                     }
                 }
@@ -288,9 +341,9 @@ public class possys {
             }
             fw.close();
 
-            } catch (IOException e) {
+        } catch (IOException e) {
 
-    }
+        }
 
     }
 
@@ -336,10 +389,10 @@ public class possys {
         try {
             FileWriter fw = new FileWriter(historyFile, true);
 
-            fw.write("--- Purchase Date and Time: " + currentDate + " " + currentTime.getHour() + ":"
+            fw.write("\n--- Purchase Date and Time: " + currentDate + " " + currentTime.getHour() + ":"
                     + String.format("%02d", currentTime.getMinute()) + " ---\n");
 
-            fw.write(String.format("%-18s %-10s %-7s %-6s  %-6s\n",
+            fw.write(String.format("\n%-18s %-10s %-7s %-6s  %-6s\n",
                     "Item", "Price", "Qty", "Disc%", "Subtotal"));
 
             for (int i = 0; i < itemsOrdered.size(); i++) {
@@ -351,9 +404,9 @@ public class possys {
                         subtotalList.get(i)));
             }
 
-            fw.write("Subtotal: $" + df.format(totalPrice) + "\n");
+            fw.write("\nSubtotal: $" + df.format(totalPrice) + "\n");
             fw.write("Bulk Discount: " + bulkDiscount + "%\n");
-            fw.write("Grand Total: $" + df.format(totalPrice * ((100 - bulkDiscount) / 100)) + "\n\n");
+            fw.write("Grand Total: $" + df.format(totalPrice * ((100 - bulkDiscount) / 100)) + "\n\n======================================================================\n");
 
 
             fw.close();
@@ -376,7 +429,7 @@ public class possys {
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("No purchase history found for " + username + ".");
+            System.out.println("\nNo purchase history found for " + username + "." + "\n\n================================\n ");
         }
     }
 
@@ -395,7 +448,7 @@ public class possys {
         for (File file : historyFiles) {
 
             String username = file.getName().replace("_history.txt", "");
-            System.out.println("\n---------- User: " + username + " ----------");
+            System.out.println("\n---------- User: " + username + " ----------\n");
 
 
             try {
@@ -408,7 +461,7 @@ public class possys {
             } catch (IOException e) {
                 System.out.println("Error reading history for " + username + ": " + e.getMessage());
             }
-            System.out.println("=".repeat(40));
+
         }
     }
 
@@ -428,7 +481,26 @@ public class possys {
         ArrayList<Double> originalPrice = new ArrayList<>();
         ArrayList<Double> subtotalList = new ArrayList<>();
 
+        boolean cartFound = loadCard(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
         boolean ordering = true;
+        if (cartFound) {
+            System.out.println("Resuming your previous order!");
+            System.out.print("Continue ordering or checkout? [y/n]: ");
+            String resume = scanner.nextLine();
+            while (true) {
+                if (resume.equalsIgnoreCase("n")) {
+                    ordering = false;
+                    break;
+                } else if (resume.equalsIgnoreCase("y")) {
+                    ordering = true;
+                    break;
+                } else {
+                    System.out.println("Please enter y or n");
+                    resume = scanner.nextLine();
+                }
+            }
+        }
+
 
         //Displaying Menu
         while (ordering) {
@@ -436,12 +508,18 @@ public class possys {
 
 
             //Asking for quantity
-            System.out.print("Select item (1-8): ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-            if (choice < 1 || choice > menu.length) {
-                System.out.println("Invalid Choice. Please try again!");
-                continue;
+            int choice = 0;
+            while (true) {
+                System.out.print("\nSelect item (1-8): ");
+                if (scanner.hasNextInt()) {
+                    choice = scanner.nextInt();
+                    scanner.nextLine();
+                    if (choice >= 1 && choice <= menu.length) break;
+                    else System.out.println("Invalid Choice. Please try again!");
+                } else {
+                    System.out.println("Invalid input. Please try again!");
+                    scanner.nextLine();
+                }
             }
 
 
@@ -485,21 +563,35 @@ public class possys {
             double subtotalDiscountedPrice = itemPrice * amount * (1 - (discountPercent / 100));
             subtotalList.add(subtotalDiscountedPrice);
 
+            saveCart(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
+
             //Looping the order
-            String orderAgain = "";
             while (true) {
-                System.out.print("Do you want to order again? [y/n]: ");
-                orderAgain = scanner.next();
-                if (orderAgain.equalsIgnoreCase("y") || orderAgain.equalsIgnoreCase("n")) {
-                    break;
+                System.out.println("\n1. Order again");
+                System.out.println("2. View / Edit Cart");
+                System.out.println("3. Checkout");
+                System.out.print("\nChoose: ");
+                if (scanner.hasNextInt()) {
+
+                    int orderChoice = scanner.nextInt();
+                    scanner.nextLine();
+                    if (orderChoice == 1) {
+                        break;
+                    } else if (orderChoice == 2) {
+                        viewCart(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
+                    } else if (orderChoice == 3) {
+                        ordering = false;
+                        break;
+                    } else {
+                        System.out.println("Invalid Input");
+                    }
                 } else {
                     System.out.println("Invalid Input");
+                    scanner.nextLine();
                 }
             }
 
-            if (!orderAgain.equalsIgnoreCase("y")) {
-                ordering = false;
-            }
+
         }
 
 
@@ -525,10 +617,79 @@ public class possys {
 
 
         printReceipt(itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
-
+        deleteCart(username);
         saveHistory(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList, totalPrice, bulkDiscount);
     }
 
+    static void viewCart(String username, ArrayList<String> itemsOrdered, ArrayList<Double> originalPrice, ArrayList<Integer> quantitiesOrdered, ArrayList<Double> discountAmount, ArrayList<Double> subtotalList) {
+        System.out.printf("\n%-4s %-18s %-10s %-7s %-6s  %-6s\n",
+                "No.",
+                "Item",
+                "Price",
+                "Qty",
+                "Disc%",
+                "Subtotal");
+
+        for (int i = 0; i < itemsOrdered.size(); i++) {
+
+            System.out.printf("%-4d %-18s $%-9.2f x%-7d %-6.0f  $%-6.2f\n",
+                    (i + 1),
+                    itemsOrdered.get(i),
+                    originalPrice.get(i),
+                    quantitiesOrdered.get(i),
+                    discountAmount.get(i),
+                    subtotalList.get(i));
+        }
+        while (true) {
+            System.out.print("\nEnter item number to remove (0 to go back): ");
+            int removeItem = 0;
+            while (true) {
+                if (scanner.hasNextInt()) {
+                    removeItem = scanner.nextInt();
+                    scanner.nextLine();
+                    if (removeItem >= 0 && removeItem <= itemsOrdered.size()) break;
+                    else System.out.print("Invalid input. Enter a number: ");
+                } else {
+                    System.out.print("Invalid input. Enter a number: ");
+                    scanner.nextLine();
+                }
+            }
+
+            if (removeItem == 0){
+                break;
+            } else {
+                itemsOrdered.remove(removeItem - 1);
+                originalPrice.remove(removeItem - 1);
+                quantitiesOrdered.remove(removeItem - 1);
+                discountAmount.remove(removeItem - 1);
+                subtotalList.remove(removeItem - 1);
+                saveCart(username, itemsOrdered, originalPrice, quantitiesOrdered, discountAmount, subtotalList);
+
+                System.out.printf("%-3s %-18s %-10s %-7s %-6s  %-6s\n",
+                        "No.",
+                        "Item",
+                        "Price",
+                        "Qty",
+                        "Disc%",
+                        "Subtotal");
+
+                for (int i = 0; i < itemsOrdered.size(); i++) {
+
+                    System.out.printf("%-3d %-18s $%-9.2f x%-7d %-6.0f  $%-6.2f\n",
+                            (i + 1),
+                            itemsOrdered.get(i),
+                            originalPrice.get(i),
+                            quantitiesOrdered.get(i),
+                            discountAmount.get(i),
+                            subtotalList.get(i)); }
+
+            }
+
+        }
+
+
+
+    }
 
 
 
